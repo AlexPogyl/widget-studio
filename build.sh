@@ -1,5 +1,9 @@
 #!/bin/bash
-# Builds WidgetStudio.app into ./dist
+# Builds "Widget Studio.app" (with the WidgetKit extension inside) into ./dist
+#
+#     ./build.sh              собрать приложение
+#     ./build.sh --register   ещё и зарегистрировать в системе (lsregister + pluginkit),
+#                             чтобы системный виджет сразу появился в галерее
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -19,7 +23,7 @@ APP="$DIST/$APP_NAME.app"
 
 echo "==> Assembling $APP"
 rm -rf "$APP"
-mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/PlugIns"
 cp "$BIN_PATH/$EXECUTABLE" "$APP/Contents/MacOS/$EXECUTABLE"
 
 if [ -f "Resources/AppIcon.icns" ]; then
@@ -48,13 +52,45 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <key>LSUIElement</key><false/>
     <key>NSHighResolutionCapable</key><true/>
     <key>NSSupportsAutomaticGraphicsSwitching</key><true/>
+    <key>NSHumanReadableCopyright</key><string>MIT License</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key><string>com.alexpogyl.widgetstudio.action</string>
+            <key>CFBundleURLSchemes</key>
+            <array><string>widgetstudio</string></array>
+        </dict>
+    </array>
 </dict>
 </plist>
 PLIST
 
+echo "==> Building the WidgetKit extension"
+./tools/build-widget-extension.sh >/dev/null
+cp -R "build/widgets/WidgetStudioWidgets.appex" "$APP/Contents/PlugIns/"
+
 echo "==> Signing (ad-hoc)"
+# The extension must keep its App Sandbox entitlement: macOS refuses to load
+# unsandboxed plug-ins. Sign the nested bundle first, the app last.
+codesign --force --sign - --timestamp=none \
+  --entitlements WidgetExtension/WidgetStudioWidgets.entitlements \
+  "$APP/Contents/PlugIns/WidgetStudioWidgets.appex" >/dev/null 2>&1 || \
+  echo "   (extension codesign skipped)"
 codesign --force --sign - --timestamp=none "$APP" >/dev/null 2>&1 || \
   echo "   (codesign skipped)"
 
+if ! codesign -d --entitlements - "$APP/Contents/PlugIns/WidgetStudioWidgets.appex" 2>/dev/null | grep -q app-sandbox; then
+  echo "   ⚠️  the widget extension lost its sandbox entitlement"
+fi
+
 echo "==> Done: $APP"
+
+if [ "${1:-}" = "--register" ]; then
+  echo "==> Registering with the system (widget gallery)"
+  LSR=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+  "$LSR" -f "$PWD/$APP" || true
+  pluginkit -a "$PWD/$APP/Contents/PlugIns/WidgetStudioWidgets.appex" || true
+  echo "    Откройте приложение один раз, затем: правый клик по рабочему столу → «Изменить виджеты…»"
+fi
+
 echo "    Запуск: open \"$APP\""

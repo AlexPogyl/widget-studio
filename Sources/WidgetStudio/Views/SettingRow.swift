@@ -1,4 +1,6 @@
+import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Renders a single customization option from its descriptor.
 ///
@@ -6,7 +8,7 @@ import SwiftUI
 /// code — they only describe which options exist.
 struct SettingRow: View {
     let descriptor: SettingDescriptor
-    @ObservedObject var instance: WidgetInstance
+    @ObservedObject var profile: WidgetProfile
 
     @EnvironmentObject private var localization: Localization
 
@@ -21,7 +23,7 @@ struct SettingRow: View {
                 HStack {
                     label
                     Spacer()
-                    Text(formatted(instance.bag.double(descriptor.id), step: step, unit: unit))
+                    Text(formatted(profile.bag.double(descriptor.id), step: step, unit: unit))
                         .font(.system(.caption, design: .monospaced))
                         .foregroundStyle(.secondary)
                 }
@@ -32,7 +34,7 @@ struct SettingRow: View {
             HStack {
                 label
                 Spacer()
-                Text(formatted(instance.bag.double(descriptor.id), step: step, unit: unit))
+                Text(formatted(profile.bag.double(descriptor.id), step: step, unit: unit))
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.secondary)
                 Stepper("", value: numberBinding, in: minimum...maximum, step: step)
@@ -69,6 +71,27 @@ struct SettingRow: View {
                         .textFieldStyle(.roundedBorder)
                 }
             }
+
+        case .application:
+            VStack(alignment: .leading, spacing: 6) {
+                label
+                HStack(spacing: 8) {
+                    if let image = WidgetLauncher.icon(for: applicationPath) {
+                        Image(nsImage: image)
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                        Text(WidgetLauncher.displayName(for: applicationPath))
+                    } else {
+                        Text(L("Не выбрано", "Not selected"))
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button(L("Выбрать…", "Choose…")) { chooseApplication() }
+                    if !applicationPath.isEmpty {
+                        Button(L("Убрать", "Clear")) { profile.set(descriptor.id, .text("")) }
+                    }
+                }
+            }
         }
     }
 
@@ -84,26 +107,44 @@ struct SettingRow: View {
         }
     }
 
+    // MARK: - Application picker
+
+    private var applicationPath: String { profile.bag.string(descriptor.id) }
+
+    private func chooseApplication() {
+        let panel = NSOpenPanel()
+        panel.title = L("Выберите приложение", "Choose an application")
+        panel.prompt = L("Выбрать", "Choose")
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        panel.allowedContentTypes = [.applicationBundle]
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.treatsFilePackagesAsDirectories = false
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        profile.set(descriptor.id, .text(url.path))
+    }
+
     // MARK: - Bindings
 
     private var boolBinding: Binding<Bool> {
-        Binding(get: { instance.bag.bool(descriptor.id) },
-                set: { instance.set(descriptor.id, .bool($0)) })
+        Binding(get: { profile.bag.bool(descriptor.id) },
+                set: { profile.set(descriptor.id, .bool($0)) })
     }
 
     private var numberBinding: Binding<Double> {
-        Binding(get: { instance.bag.double(descriptor.id) },
-                set: { instance.set(descriptor.id, .number($0)) })
+        Binding(get: { profile.bag.double(descriptor.id) },
+                set: { profile.set(descriptor.id, .number($0)) })
     }
 
     private var stringBinding: Binding<String> {
-        Binding(get: { instance.bag.string(descriptor.id) },
-                set: { instance.set(descriptor.id, .text($0)) })
+        Binding(get: { profile.bag.string(descriptor.id) },
+                set: { profile.set(descriptor.id, .text($0)) })
     }
 
     private var colorBinding: Binding<Color> {
-        Binding(get: { instance.bag.color(descriptor.id) },
-                set: { instance.set(descriptor.id, .color(RGBA(color: $0))) })
+        Binding(get: { profile.bag.color(descriptor.id) },
+                set: { profile.set(descriptor.id, .color(RGBA(color: $0))) })
     }
 
     private func formatted(_ value: Double, step: Double, unit: String?) -> String {

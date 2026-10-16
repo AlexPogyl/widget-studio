@@ -21,37 +21,35 @@ struct AppSettingsView: View {
                 Toggle(L("Показывать значок в Dock", "Show icon in Dock"), isOn: $state.app.showDockIcon)
                     .toggleStyle(.switch)
 
-                Toggle(L("Кнопки при наведении на виджет", "Show buttons on widget hover"),
-                       isOn: $state.app.showHoverControls)
+                Toggle(L("Показывать значок в строке меню", "Show menu bar icon"), isOn: $state.app.showStatusItem)
+                    .toggleStyle(.switch)
+
+                Toggle(L("Открывать окно при запуске", "Open the window on launch"),
+                       isOn: $state.app.windowOnLaunch)
                     .toggleStyle(.switch)
             }
 
-            Section(L("Виджеты", "Widgets")) {
-                Toggle(L("Показывать виджеты на рабочем столе", "Show widgets on the desktop"),
-                       isOn: $state.widgetsHidden)
-                    .toggleStyle(.switch)
-
-                Toggle(L("Прилипание к сетке", "Snap to grid"), isOn: $state.app.snapToGrid)
-                    .toggleStyle(.switch)
-
-                if state.app.snapToGrid {
-                    HStack {
-                        Text(L("Шаг сетки", "Grid step"))
-                        Spacer()
-                        Text("\(Int(state.app.gridSize)) pt")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(.secondary)
-                        Stepper("", value: $state.app.gridSize, in: 2...64, step: 2)
-                            .labelsHidden()
-                    }
+            Section(L("Виджеты на рабочем столе", "Widgets on the desktop")) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(L("Добавляются системной галереей:", "Added by the system gallery:"))
+                        .font(.callout)
+                    Text(L("правый клик по рабочему столу → «Изменить виджеты…» → Widget Studio",
+                           "right-click the desktop → “Edit Widgets…” → Widget Studio"))
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
                 }
 
-                Picker(L("Уровень новых виджетов", "Level of new widgets"), selection: $state.app.defaultLevel) {
-                    ForEach(WidgetLevel.allCases) { level in
-                        Text(level.title.value).tag(level)
+                HStack {
+                    Button {
+                        state.reloadSystemWidgets()
+                    } label: {
+                        Label(L("Обновить виджеты", "Reload widgets"), systemImage: "arrow.clockwise")
+                    }
+                    Spacer()
+                    Button(L("Как добавить виджет…", "How to add a widget…")) {
+                        AppEnvironment.shared.settingsWindow?.showHowToAddWidget()
                     }
                 }
-                .pickerStyle(.menu)
             }
 
             Section(L("Конфигурация", "Configuration")) {
@@ -63,10 +61,10 @@ struct AppSettingsView: View {
                 }
 
                 HStack {
-                    Text(L("Виджетов на рабочем столе", "Widgets on the desktop"))
+                    Text(L("Настроено видов виджетов", "Configured widget kinds"))
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Text("\(state.widgets.count)")
+                    Text("\(state.profiles.count)")
                         .font(.system(.body, design: .monospaced))
                 }
 
@@ -80,8 +78,8 @@ struct AppSettingsView: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Widget Studio \(version)")
                             .font(.headline)
-                        Text(L("Кастомизируемые виджеты для рабочего стола macOS. Виджет часов повторяет виджет с iPhone.",
-                               "Customizable desktop widgets for macOS. The clock widget mirrors the iPhone one."))
+                        Text(L("Кастомизируемые системные виджеты для рабочего стола macOS. Виджет часов повторяет виджет с iPhone.",
+                               "Customizable system widgets for the macOS desktop. The clock widget mirrors the iPhone one."))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

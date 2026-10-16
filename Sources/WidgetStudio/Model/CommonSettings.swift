@@ -7,7 +7,7 @@ import SwiftUI
 /// all widgets in exactly the same way.
 enum CommonSettings {
 
-    static let definitions: [SettingDescriptor] = card + typography
+    static let definitions: [SettingDescriptor] = card + typography + behaviour
 
     // MARK: - Card
 
@@ -50,6 +50,25 @@ enum CommonSettings {
 
         .toggle("common.shadow", LText("Тень окна", "Window shadow"), group: SettingGroup.card,
                 caption: LText("Системная тень вокруг всей карточки", "System shadow around the whole card"))
+    ]
+
+    // MARK: - Behaviour
+
+    static let behaviour: [SettingDescriptor] = [
+        .picker("common.clickAction", LText("Клик по виджету", "Clicking the widget"),
+                group: SettingGroup.behavior,
+                options: [
+                    SettingOption("none", LText("Ничего не делать", "Do nothing")),
+                    SettingOption("application", LText("Открыть приложение", "Open an application"))
+                ],
+                default: "none",
+                caption: LText("Работает у системных виджетов на рабочем столе",
+                               "Works for the system widgets on the desktop")),
+
+        .application("common.clickApplication", LText("Приложение", "Application"),
+                     group: SettingGroup.behavior,
+                     caption: LText("Откроется при клике по виджету", "Opened when the widget is clicked"),
+                     visibleIf: { $0.string("common.clickAction") == "application" })
     ]
 
     // MARK: - Typography

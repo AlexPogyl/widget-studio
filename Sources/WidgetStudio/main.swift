@@ -9,5 +9,7 @@ import AppKit
 let application = NSApplication.shared
 let delegate = AppDelegate()
 application.delegate = delegate
-application.setActivationPolicy(.accessory)
+// Widget Studio is an ordinary app with a Dock icon; the appearance can be
+// adjusted from the settings (a menu bar only mode is available as well).
+application.setActivationPolicy(.regular)
 application.run()

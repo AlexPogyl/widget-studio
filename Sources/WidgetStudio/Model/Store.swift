@@ -2,20 +2,35 @@ import AppKit
 import Foundation
 
 /// Application-wide preferences.
+///
+/// Decoding is written by hand so that a configuration file created by an older
+/// version keeps working after new options are added.
 struct AppSettings: Codable, Equatable {
     var language: AppLanguage = .ru
-    var showDockIcon: Bool = false
-    var snapToGrid: Bool = true
-    var gridSize: Double = 16
-    var showHoverControls: Bool = true
-    var defaultLevel: WidgetLevel = .desktop
+    var showDockIcon: Bool = true
+    var showStatusItem: Bool = true
+    var windowOnLaunch: Bool = true
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let defaults = AppSettings()
+        language = (try? container.decodeIfPresent(AppLanguage.self, forKey: .language)) ?? defaults.language
+        showDockIcon = (try? container.decodeIfPresent(Bool.self, forKey: .showDockIcon)) ?? defaults.showDockIcon
+        showStatusItem = (try? container.decodeIfPresent(Bool.self, forKey: .showStatusItem)) ?? defaults.showStatusItem
+        windowOnLaunch = (try? container.decodeIfPresent(Bool.self, forKey: .windowOnLaunch)) ?? defaults.windowOnLaunch
+    }
 }
 
 /// The whole persisted state of the app.
+///
+/// `widgets` holds one entry per widget kind; the WidgetKit extension reads the
+/// same file to render the widgets with the user's settings.
 struct AppConfiguration: Codable {
-    var version: Int = 1
+    var version: Int = 2
     var app: AppSettings = AppSettings()
-    var widgets: [WidgetRecord] = []
+    var widgets: [WidgetProfileRecord] = []
 }
 
 /// Reads and writes `~/Library/Application Support/WidgetStudio/config.json`.
@@ -43,10 +58,12 @@ enum Store {
             return try JSONDecoder().decode(AppConfiguration.self, from: data)
         } catch {
             NSLog("[WidgetStudio] Failed to read config: \(error)")
-            // Keep a copy of the broken file so nothing is silently lost.
+            // Keep a copy of the unreadable file, then start from scratch so the
+            // app never comes up empty-handed.
             let backup = configURL.appendingPathExtension("broken")
             try? FileManager.default.removeItem(at: backup)
             try? FileManager.default.copyItem(at: configURL, to: backup)
+            try? FileManager.default.removeItem(at: configURL)
             return AppConfiguration()
         }
     }

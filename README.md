@@ -1,96 +1,105 @@
 # Widget Studio
 
-**Кастомизируемые виджеты для рабочего стола macOS.** Первый виджет — точная копия
-часов с iPhone, которые macOS «отзеркаливает» на рабочий стол: чёрная карточка,
-светлая рамка 8 pt, огромные наклонные цифры.
+**Обычное приложение для macOS, которое настраивает системные виджеты рабочего стола.**
+Виджеты добавляются штатной галереей macOS — правый клик (или два пальца) по
+рабочему столу → **«Изменить виджеты…»** → *Widget Studio*. Дальше macOS сама
+перетаскивает, двигает, меняет размер и удаляет их: никаких собственных окон и
+самодельного перетаскивания.
+
+<img src="docs/icon.png" width="96" alt="Иконка Widget Studio">
+
+Виджет часов — точная копия виджета с iPhone, который macOS «отзеркаливает» на
+рабочий стол: чёрная карточка, светлая рамка 8 pt, огромные наклонные цифры.
 
 ![Сравнение: оригинал и Widget Studio](docs/comparison.png)
 
 *Слева — оригинальный виджет, перенесённый с iPhone. Справа — виджет, нарисованный
 Widget Studio с настройками по умолчанию.*
 
-В репозитории сразу три виджета (часы, календарь, заметка) и полноценный движок
-кастомизации: любой виджет можно перенастроить до последнего пикселя, а новый
-виджет добавляется одним файлом.
+## Как это работает
+
+![Widget Studio в галерее «Изменить виджеты»](docs/system-widget-gallery.png)
+
+1. Настраиваете внешний вид виджета в приложении — справа живой предпросмотр
+   ровно того, что увидите на рабочем столе.
+2. Приложение кладёт настройки в `~/Library/Application Support/WidgetStudio/config.json`
+   и просит систему перерисовать виджеты.
+3. Расширение WidgetKit читает тот же файл и рисует системный виджет этим
+   оформлением.
+
+Изменения применяются на лету: правьте ползунки и смотрите на виджет на рабочем
+столе (кнопка «Обновить виджеты» — если система не перерисовала сразу).
 
 ## Возможности
 
-**Виджеты**
-- 🕘 **Часы** — две строки или одна, 12/24 часа, ведущий ноль, секунды, дата,
-  мигающее двоеточие, любой часовой пояс (Москва, Нью-Йорк, Токио…).
-- 📅 **Календарь** — сетка месяца, неделя с понедельника или с воскресенья,
-  выделение сегодняшнего дня, дни соседних месяцев, год в заголовке.
-- 📝 **Заметка** — любой текст на рабочем столе.
+**Приложение**
+- обычное приложение: значок в Dock, своя иконка, главное окно при запуске,
+  полноценное меню (⌘, — настройки, ⌘Q — выход);
+- значок в строке меню (можно отключить) с командой «Обновить виджеты»;
+- обзор со всеми виджетами и инструкцией, как добавить их на рабочий стол;
+- настройки на каждый вид виджета, экспорт и импорт конфигурации.
 
-**Оформление каждого виджета (общий движок)**
+**Кастомизация**
 - фон: сплошной / градиент с настраиваемым углом / «стекло» / без фона;
-- два цвета фона, цвет и толщина рамки, скругление углов, внутренние отступы,
-  прозрачность, системная тень;
-- типографика: гарнитура (системная, округлая, моноширинная, с засечками),
-  насыщенность, размер, курсив, дополнительный наклон, межбуквенный и
-  межстрочный интервал, цвет текста, яркость дополнительного текста;
+- два цвета фона, цвет и толщина рамки, скругление, внутренние отступы,
+  прозрачность;
+- типографика: гарнитура, насыщенность, размер, курсив, дополнительный наклон,
+  межбуквенный и межстрочный интервал, цвета текста;
 - готовые стили в один клик: «Как на iPhone», «Минимализм», «Стекло», «Неон»,
   «Гигантские», «Классика»;
-- размер и позиция: пресеты 158×158 / 338×158 / 338×338, свободные ширина и
-  высота, точные координаты.
+- **клик по виджету**: ничего не делать или открывать выбранное приложение
+  (выбирается из списка, можно не выбирать).
 
-**Поведение**
-- три уровня окна: **на рабочем столе** (под обычными окнами, как системные
-  виджеты), обычное окно, поверх всех окон;
-- перетаскивание мышью с прилипанием к сетке и краям экрана;
-- блокировка перемещения, режим «не реагировать на клики», скрытие;
-- кнопки «настроить» и «скрыть» при наведении, контекстное меню по правой кнопке;
-- двуязычный интерфейс (русский / English), значок в Dock по желанию;
-- всё состояние хранится в JSON, есть экспорт/импорт конфигурации.
+**Виджеты**
+- 🕘 **Часы** — две строки или одна, 12/24 часа, ведущий ноль, секунды, дата,
+  мигающее двоеточие, любой часовой пояс.
+- 📅 **Календарь** — сетка месяца, неделя с понедельника или воскресенья,
+  выделение сегодняшнего дня, дни соседних месяцев, год в заголовке.
+- 📝 **Заметка** — любой текст.
+
+Все три доступны и как системные виджеты: маленький, средний и большой размеры.
 
 ## Скриншоты
 
-| Галерея виджетов | Кастомизация |
+| Обзор | Кастомизация |
 | --- | --- |
-| ![Галерея](docs/gallery.png) | ![Инспектор](docs/inspector.png) |
+| ![Обзор](docs/overview.png) | ![Инспектор](docs/inspector.png) |
 
 ## Требования
 
-- macOS 13 или новее;
-- Xcode Command Line Tools (`xcode-select --install`) — этого достаточно,
-  полноценный Xcode не нужен.
+- macOS 14 или новее (системные виджеты);
+- Xcode Command Line Tools (`xcode-select --install`) — полноценный Xcode не нужен.
 
 ## Сборка и запуск
 
 ```bash
 git clone https://github.com/AlexPogyl/widget-studio.git
 cd widget-studio
-./run.sh          # собрать и запустить
+./run.sh                    # собрать + зарегистрировать в системе + запустить
 ```
 
-Или по шагам:
+По шагам:
 
 ```bash
-./build.sh                       # собирает dist/Widget Studio.app
+./build.sh                  # dist/Widget Studio.app (вместе с WidgetKit-расширением)
+./build.sh --register       # ещё и зарегистрировать в системе (lsregister + pluginkit)
 open "dist/Widget Studio.app"
 ```
 
-Приложение живёт в строке меню (значок из четырёх квадратов) и сразу создаёт
-часы в левом верхнем углу рабочего стола.
+Чтобы виджет появился в галерее:
 
-## Как пользоваться
-
-- **Перетаскивание** — потяните виджет мышью; при отпускании он прилипает к сетке
-  и к краям экрана.
-- **Правая кнопка** — контекстное меню: настроить, дублировать, уровень окна,
-  заблокировать, скрыть, сбросить оформление, удалить.
-- **Наведение** — в углу карточки появляются кнопки «настроить» и «скрыть».
-- **Строка меню** — открыть окно настроек (⌘,), скрыть/показать все виджеты,
-  быстро добавить виджет, выход.
-- **Окно настроек** — слева галерея и список размещённых виджетов, справа живой
-  предпросмотр и все параметры выбранного виджета.
+1. `./build.sh --register` (или просто перенесите `Widget Studio.app` в
+   `/Applications` — LaunchServices подхватит его сам);
+2. запустите приложение один раз;
+3. правый клик по рабочему столу → **«Изменить виджеты…»** → в списке слева
+   **Widget Studio** → перетащите виджет на рабочий стол.
 
 Конфигурация: `~/Library/Application Support/WidgetStudio/config.json`.
 
 ## Как добавить новый виджет
 
-Достаточно одного файла: опишите `WidgetDefinition` (имя, размер, список настроек,
-готовые стили и функцию отрисовки) и допишите его в `WidgetCatalog.all`.
+Достаточно одного файла с `WidgetDefinition` — имя, размер, схема настроек,
+готовые стили и функция отрисовки, — и строчки в `WidgetCatalog.all`.
 
 ```swift
 enum BatteryWidget {
@@ -115,21 +124,65 @@ enum BatteryWidget {
 }
 ```
 
-Ничего больше делать не нужно: галерея, меню, сохранение, инспектор настроек и
-готовые стили подхватят виджет автоматически — UI строится из схемы настроек
-(`SettingDescriptor`), а не пишется руками.
+Галерея, меню, инспектор настроек, сохранение и готовые стили подхватят виджет
+автоматически: UI строится из схемы настроек (`SettingDescriptor`), а не пишется
+руками. Чтобы он стал ещё и **системным**, добавьте `StaticConfiguration` вокруг
+того же рендера в `WidgetExtension/WidgetStudioWidgets.swift`:
+
+```swift
+struct StudioBatteryWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: BatteryWidget.definition.id,
+                            provider: StudioProvider(kind: BatteryWidget.definition.id)) { entry in
+            StudioWidgetView(entry: entry)
+        }
+        .configurationDisplayName(BatteryWidget.definition.name.value)
+        .description(BatteryWidget.definition.summary.value)
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .contentMarginsDisabled()
+    }
+}
+```
 
 ## Структура проекта
 
 ```
 Sources/WidgetStudio/
 ├── main.swift                  запуск NSApplication
-├── App/                        состояние, локализация, статус-бар, главное меню
+├── App/                        состояние, локализация, статус-бар, меню, запуск приложений
 ├── Model/                      настройки, схема кастомизации, конфигурация, каталог виджетов
 ├── Widgets/                    сами виджеты: ClockWidget, CalendarWidget, NoteWidget
-├── Windows/                    окна виджетов и окно настроек
-└── Views/                      рендер виджета, галерея, инспектор, контролы настроек
+├── Windows/                    окно настроек
+└── Views/                      рендер виджета, обзор, инспектор, контролы настроек
+
+WidgetExtension/                WidgetKit-расширение (системные виджеты)
+tools/
+├── MakeIcon.swift              генерация Resources/AppIcon.icns
+└── build-widget-extension.sh   сборка .appex без Xcode
 ```
+
+## Технические заметки
+
+Расширение собирается вручную (`tools/build-widget-extension.sh`), потому что
+Xcode не требуется:
+
+- компиляция `swiftc` с `-application-extension -parse-as-library`;
+- **точка входа** — `NSExtensionMain`: без `-Xlinker -e -Xlinker _NSExtensionMain`
+  процесс расширения стартует и сразу завершается, а `chronod` пишет
+  «Connection to extension process was invalidated»;
+- **расширение обязано быть в песочнице**: без `com.apple.security.app-sandbox`
+  система отклоняет плагин («plug-ins must be sandboxed»). Ad-hoc подписи с этим
+  entitlement достаточно, сертификат разработчика не нужен;
+- при подписи приложения нельзя переподписывать вложенный `.appex` без
+  `--entitlements`, иначе песочница теряется (`build.sh` делает это правильно и
+  проверяет результат);
+- **таймлайн** виджета должен начинаться с текущего момента, иначе macOS рисует
+  пустую светлую заглушку вместо содержимого;
+- у виджета задан явный `containerBackground`, иначе в неактивном состоянии
+  рабочего стола система подставляет свой светлый фон;
+- «открыть приложение по клику» работает через `widgetURL` со схемой
+  `widgetstudio://launch?path=…`: виджет не может запускать приложения сам,
+  поэтому URL получает Widget Studio и открывает выбранное приложение.
 
 ## Разработка
 
@@ -148,57 +201,67 @@ MIT — см. [LICENSE](LICENSE).
 
 # Widget Studio (English)
 
-**Customizable desktop widgets for macOS.** The first widget is a faithful copy of
-the iPhone clock that macOS mirrors onto the desktop: a black card, an 8 pt light
-ring and huge oblique digits.
+**An ordinary macOS app that customizes the system desktop widgets.** Widgets are
+added through the standard macOS gallery — right-click (or two-finger tap) the
+desktop → **“Edit Widgets…”** → *Widget Studio*. From there macOS handles
+dragging, resizing and removal itself: no custom windows, no home-made dragging.
 
-Three widgets ship out of the box (clock, calendar, note) plus a full
-customization engine: every widget can be tuned down to the last pixel, and a new
-widget is a single file.
+The clock widget is a pixel-calibrated copy of the iPhone clock that macOS mirrors
+onto the desktop: a black card, an 8 pt light ring and huge oblique digits.
+
+### How it works
+
+1. Customize a widget in the app — the preview shows exactly what the desktop
+   widget will look like.
+2. The app writes `~/Library/Application Support/WidgetStudio/config.json` and
+   asks the system to redraw the widgets.
+3. The WidgetKit extension reads the same file and renders the system widget with
+   that look.
 
 ### Features
 
-- **Clock** — one or two lines, 12/24 h, leading zero, seconds, date, blinking
-  colon, any time zone.
-- **Calendar** — month grid, Monday/Sunday first, today highlighted, adjacent
-  month days, optional year.
-- **Note** — any text on your desktop.
-- Shared appearance engine: solid/gradient/glass/no background, two background
-  colours, border colour and width, corner radius, padding, opacity, window
-  shadow; typeface, weight, size, italic, extra slant, letter and line spacing,
-  text colours.
-- Ready-made presets: iPhone style, Minimal, Glass, Neon, Giant, Classic.
-- Size presets 158×158 / 338×158 / 338×338 plus free width/height and exact
-  coordinates.
-- Window level: on the desktop (like the system widgets), normal, always on top.
-- Drag with snapping to grid and screen edges, lock, click-through, hide,
-  hover buttons, context menu, RU/EN interface, JSON config with import/export.
+- Regular app: Dock icon, custom app icon, main window on launch, full menu.
+- Overview with every widget and clear instructions, per-kind settings, import and
+  export of the configuration.
+- Customization: solid/gradient/glass/no background, two colours, border colour and
+  width, corner radius, padding, opacity, full typography, ready-made presets.
+- **Click action**: do nothing or open a chosen application (picked from a list,
+  or nothing at all).
+- Three widgets (clock, calendar, note) in small, medium and large sizes.
 
 ### Requirements
 
-macOS 13+, Xcode Command Line Tools (`xcode-select --install`). Xcode itself is
-not required.
+macOS 14 or newer; Xcode Command Line Tools (`xcode-select --install`). Xcode
+itself is not required.
 
-### Build & run
+### Build & install
 
 ```bash
 git clone https://github.com/AlexPogyl/widget-studio.git
 cd widget-studio
-./run.sh
+./run.sh                 # build + register + launch
+# or
+./build.sh --register
 ```
 
-The app lives in the menu bar (four-squares icon) and creates a clock widget in
-the top-left corner of the desktop on first launch.
-
-The configuration file is stored at
-`~/Library/Application Support/WidgetStudio/config.json`.
+Then right-click the desktop → “Edit Widgets…” → **Widget Studio** → drag a widget
+onto the desktop.
 
 ### Adding a widget
 
-Create a file with a `WidgetDefinition` (name, size, settings schema, presets and
-a render closure) and append it to `WidgetCatalog.all`. The gallery, menu bar,
-persistence and the whole customization inspector are generated from the schema —
-no UI code to write.
+Create a `WidgetDefinition` and append it to `WidgetCatalog.all`; the gallery,
+menu bar, persistence and the whole customization inspector are generated from the
+settings schema. To make it a system widget as well, add a `StaticConfiguration`
+around the same renderer in `WidgetExtension/WidgetStudioWidgets.swift`.
+
+### Technical notes
+
+The widget extension is built without Xcode. It must use `NSExtensionMain` as the
+entry point and must be sandboxed, the nested `.appex` must be re-signed with its
+entitlements, the timeline must start at the current moment and the widget needs an
+explicit container background — otherwise macOS shows its empty light placeholder.
+“Open an app on click” is implemented with a `widgetstudio://launch?path=…` URL
+that the app handles.
 
 ### License
 

@@ -19,6 +19,8 @@ enum SettingControl {
     case color
     case picker([SettingOption])
     case text(multiline: Bool)
+    /// Picks an application bundle (used by the "open on click" action).
+    case application
 }
 
 /// Declarative description of a single customization option.
@@ -124,6 +126,15 @@ extension SettingDescriptor {
                        visibleIf: ((SettingsBag) -> Bool)? = nil) -> SettingDescriptor {
         SettingDescriptor(id: id, title: title, caption: caption, group: group,
                           control: .picker(options), defaultValue: .text(defaultValue), isVisible: visibleIf)
+    }
+
+    static func application(_ id: String,
+                            _ title: LText,
+                            group: LText,
+                            caption: LText? = nil,
+                            visibleIf: ((SettingsBag) -> Bool)? = nil) -> SettingDescriptor {
+        SettingDescriptor(id: id, title: title, caption: caption, group: group,
+                          control: .application, defaultValue: .text(""), isVisible: visibleIf)
     }
 
     static func text(_ id: String,
