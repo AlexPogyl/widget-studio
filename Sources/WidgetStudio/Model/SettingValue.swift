@@ -63,6 +63,8 @@ enum SettingValue: Equatable {
     case number(Double)
     case text(String)
     case color(RGBA)
+    /// A list of strings (used for the photo widget).
+    case list([String])
 }
 
 extension SettingValue: Codable {
@@ -78,6 +80,8 @@ extension SettingValue: Codable {
             self = .text(value)
         } else if let value = try? container.decode(RGBA.self) {
             self = .color(value)
+        } else if let value = try? container.decode([String].self) {
+            self = .list(value)
         } else {
             throw DecodingError.dataCorruptedError(in: container,
                                                    debugDescription: "Unsupported setting value")
@@ -92,6 +96,7 @@ extension SettingValue: Codable {
         case .number(let value): try container.encode(value)
         case .text(let value): try container.encode(value)
         case .color(let value): try container.encode(value)
+        case .list(let value): try container.encode(value)
         }
     }
 }
@@ -109,6 +114,7 @@ extension SettingValue {
     var intValue: Int { Int(doubleValue.rounded()) }
     var stringValue: String { if case .text(let v) = self { return v }; return "" }
     var colorValue: RGBA { if case .color(let v) = self { return v }; return .white }
+    var listValue: [String] { if case .list(let v) = self { return v }; return [] }
 }
 
 extension Double {

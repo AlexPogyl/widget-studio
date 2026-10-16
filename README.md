@@ -55,9 +55,17 @@ Widget Studio с настройками по умолчанию.*
   мигающее двоеточие, любой часовой пояс.
 - 📅 **Календарь** — сетка месяца, неделя с понедельника или воскресенья,
   выделение сегодняшнего дня, дни соседних месяцев, год в заголовке.
+- 📷 **Фото** — ваши картинки: одно фото или несколько, которые меняются по
+  очереди (от минуты до суток), с приближением, чёрно-белым режимом,
+  затемнением и часами в углу.
 - 📝 **Заметка** — любой текст.
 
-Все три доступны и как системные виджеты: маленький, средний и большой размеры.
+Все виджеты доступны и как системные: маленький, средний и большой размеры.
+
+![Виджет «Фото»](docs/photo-widget.png)
+
+Фотографии приложение копирует в общий контейнер, поэтому системный виджет
+(он работает в песочнице) может их показывать.
 
 ## Скриншоты
 
@@ -182,7 +190,13 @@ Xcode не требуется:
   рабочего стола система подставляет свой светлый фон;
 - «открыть приложение по клику» работает через `widgetURL` со схемой
   `widgetstudio://launch?path=…`: виджет не может запускать приложения сам,
-  поэтому URL получает Widget Studio и открывает выбранное приложение.
+  поэтому URL получает Widget Studio и открывает выбранное приложение;
+- **расширение продолжает работать на коде, загруженном при старте процесса**.
+  `reloadAllTimelines()` перечитывает только данные, поэтому после обновления
+  приложения на рабочем столе остаётся старая отрисовка (в тяжёлых случаях —
+  пустая светлая заглушка). Приложение само перезапускает процесс расширения
+  (killing `WidgetStudioWidgets`) при смене версии и по кнопке «Обновить виджеты»;
+  вручную помогает `killall chronod`.
 
 ## Разработка
 
@@ -227,7 +241,9 @@ onto the desktop: a black card, an 8 pt light ring and huge oblique digits.
   width, corner radius, padding, opacity, full typography, ready-made presets.
 - **Click action**: do nothing or open a chosen application (picked from a list,
   or nothing at all).
-- Three widgets (clock, calendar, note) in small, medium and large sizes.
+- Photo widget: one picture or several in rotation (from a minute to a day), with
+  zoom, black-and-white mode, darkening and an optional clock.
+- Four widgets (clock, calendar, photo, note) in small, medium and large sizes.
 
 ### Requirements
 
@@ -261,7 +277,10 @@ entry point and must be sandboxed, the nested `.appex` must be re-signed with it
 entitlements, the timeline must start at the current moment and the widget needs an
 explicit container background — otherwise macOS shows its empty light placeholder.
 “Open an app on click” is implemented with a `widgetstudio://launch?path=…` URL
-that the app handles.
+that the app handles. A widget extension keeps running the code it loaded when its
+process started, so after an app update the desktop keeps showing the old build
+until the extension process is restarted — the app does that itself on a version
+change and from the “Reload widgets” button.
 
 ### License
 

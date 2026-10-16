@@ -36,6 +36,9 @@ final class AppEnvironment {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                 if mode == "inspector", let first = WidgetCatalog.all.first {
                     self.settingsWindow?.show(selecting: first.id)
+                } else if WidgetCatalog.definition(mode) != nil {
+                    // `WIDGETSTUDIO_SHOW_SETTINGS=photo` opens that widget's inspector.
+                    self.settingsWindow?.show(selecting: mode)
                 } else {
                     self.settingsWindow?.show()
                 }

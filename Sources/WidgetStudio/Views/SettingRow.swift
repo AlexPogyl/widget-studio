@@ -72,6 +72,59 @@ struct SettingRow: View {
                 }
             }
 
+        case .images:
+            VStack(alignment: .leading, spacing: 8) {
+                label
+
+                if !imageNames.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(imageNames, id: \.self) { name in
+                                ZStack(alignment: .topTrailing) {
+                                    if let thumbnail = PhotoStore.thumbnail(named: name) {
+                                        Image(nsImage: thumbnail)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 68, height: 68)
+                                            .clipShape(RoundedRectangle(cornerRadius: 9))
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 9)
+                                            .fill(Color.secondary.opacity(0.2))
+                                            .frame(width: 68, height: 68)
+                                    }
+                                    Button {
+                                        removeImage(name)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .symbolRenderingMode(.palette)
+                                            .foregroundStyle(.white, .black.opacity(0.6))
+                                    }
+                                    .buttonStyle(.plain)
+                                    .offset(x: 5, y: -5)
+                                    .help(L("Убрать фото", "Remove photo"))
+                                }
+                            }
+                        }
+                        .padding(.top, 6)
+                        .padding(.horizontal, 1)
+                    }
+                }
+
+                HStack {
+                    Button(L("Добавить фото…", "Add photos…")) { addImages() }
+                    if !imageNames.isEmpty {
+                        Text(L("\(imageNames.count) шт.", "\(imageNames.count) selected"))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button(L("Очистить", "Clear")) {
+                            for name in imageNames { PhotoStore.remove(name) }
+                            profile.set(descriptor.id, .list([]))
+                        }
+                    }
+                }
+            }
+
         case .application:
             VStack(alignment: .leading, spacing: 6) {
                 label
@@ -105,6 +158,32 @@ struct SettingRow: View {
                     .foregroundStyle(.secondary)
             }
         }
+    }
+
+    // MARK: - Photo picker
+
+    private var imageNames: [String] { profile.bag.list(descriptor.id) }
+
+    private func addImages() {
+        let panel = NSOpenPanel()
+        panel.title = L("Выберите фотографии", "Choose photos")
+        panel.prompt = L("Добавить", "Add")
+        panel.allowedContentTypes = [.image]
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        guard panel.runModal() == .OK else { return }
+        var names = imageNames
+        for url in panel.urls {
+            if let name = PhotoStore.importImage(from: url) { names.append(name) }
+        }
+        profile.set(descriptor.id, .list(names))
+    }
+
+    private func removeImage(_ name: String) {
+        var names = imageNames
+        names.removeAll { $0 == name }
+        profile.set(descriptor.id, .list(names))
+        PhotoStore.remove(name)
     }
 
     // MARK: - Application picker

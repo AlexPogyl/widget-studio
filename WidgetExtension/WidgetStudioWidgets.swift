@@ -68,7 +68,7 @@ struct StudioProvider: TimelineProvider {
     }
 
     func placeholder(in context: Context) -> StudioEntry {
-        StudioEntry(date: Date(), kind: kind, settings: definition.bag([:]))
+        return StudioEntry(date: Date(), kind: kind, settings: definition.bag([:]))
     }
 
     func getSnapshot(in context: Context, completion: @escaping (StudioEntry) -> Void) {
@@ -168,6 +168,19 @@ struct StudioCalendarWidget: Widget {
     }
 }
 
+struct StudioPhotoWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: PhotoWidget.definition.id,
+                            provider: StudioProvider(kind: PhotoWidget.definition.id)) { entry in
+            StudioWidgetView(entry: entry)
+        }
+        .configurationDisplayName(PhotoWidget.definition.name.value)
+        .description(PhotoWidget.definition.summary.value)
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .contentMarginsDisabled()
+    }
+}
+
 struct StudioNoteWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: NoteWidget.definition.id,
@@ -188,6 +201,7 @@ struct WidgetStudioWidgets: WidgetBundle {
     var body: some Widget {
         StudioClockWidget()
         StudioCalendarWidget()
+        StudioPhotoWidget()
         StudioNoteWidget()
     }
 }

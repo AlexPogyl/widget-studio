@@ -4,6 +4,9 @@ import SwiftUI
 import UniformTypeIdentifiers
 import WidgetKit
 
+/// Executable name inside WidgetStudioWidgets.appex; used to restart it.
+let WidgetExtensionProcessName = "WidgetStudioWidgets"
+
 /// What is selected in the settings window sidebar.
 enum SidebarSelection: Hashable {
     case overview
@@ -35,6 +38,7 @@ final class AppState: ObservableObject {
 
         observeProfiles()
         applyDockPolicy()
+        restartWidgetsAfterUpdate()
         // Persist the initial set of profiles, so a fresh install is complete.
         scheduleSave()
     }
@@ -105,8 +109,34 @@ final class AppState: ObservableObject {
     }
 
     /// Asks the system to redraw the widgets with the current settings.
+    ///
+    /// A widget extension keeps running the code it loaded when its process
+    /// started, and `reloadAllTimelines()` does not restart it — after an update
+    /// the desktop would keep showing the old build. Killing the helper process
+    /// makes `chronod` launch the extension from the current bundle again.
     func reloadSystemWidgets() {
+        Self.restartWidgetExtension()
         WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    static func restartWidgetExtension() {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/killall")
+        task.arguments = [WidgetExtensionProcessName]
+        try? task.run()
+        task.waitUntilExit()
+    }
+
+    /// Called once per app version: extensions started by a previous build must
+    /// not keep rendering the old widget.
+    private func restartWidgetsAfterUpdate() {
+        let key = "WidgetStudioLastLaunchedVersion"
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0"
+        let defaults = UserDefaults.standard
+        let previous = defaults.string(forKey: key)
+        defaults.set(version, forKey: key)
+        guard previous != version else { return }
+        Self.restartWidgetExtension()
     }
 
     var configuration: AppConfiguration {

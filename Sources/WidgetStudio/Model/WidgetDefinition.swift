@@ -92,6 +92,7 @@ enum WidgetCatalog {
     static let all: [WidgetDefinition] = [
         ClockWidget.definition,
         CalendarWidget.definition,
+        PhotoWidget.definition,
         NoteWidget.definition
     ]
 

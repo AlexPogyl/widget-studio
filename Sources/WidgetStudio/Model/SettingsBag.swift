@@ -24,6 +24,7 @@ struct SettingsBag {
     func double(_ id: String) -> Double { value(id).doubleValue }
     func int(_ id: String) -> Int { value(id).intValue }
     func string(_ id: String) -> String { value(id).stringValue }
+    func list(_ id: String) -> [String] { value(id).listValue }
     func rgba(_ id: String) -> RGBA { value(id).colorValue }
     func color(_ id: String) -> Color { rgba(id).color }
 }
