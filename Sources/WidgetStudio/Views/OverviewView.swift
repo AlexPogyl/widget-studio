@@ -56,8 +56,8 @@ struct OverviewView: View {
                 } label: {
                     Label(L("Обновить виджеты", "Reload widgets"), systemImage: "arrow.clockwise")
                 }
-                Text(L("Перетаскивание, размер и удаление виджетов делает сама macOS.",
-                       "Dragging, resizing and removing widgets is handled by macOS."))
+                Text(L("Перетаскивание, размер и удаление виджетов делает сама macOS. Если виджет на рабочем столе выглядит пустым — уберите его и добавьте заново.",
+                       "Dragging, resizing and removing widgets is handled by macOS. If a widget on the desktop looks empty, remove it and add it again."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

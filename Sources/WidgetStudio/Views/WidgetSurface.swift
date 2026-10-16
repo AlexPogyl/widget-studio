@@ -1,11 +1,13 @@
 import SwiftUI
 
-/// Draws one widget: the content provided by the widget plus the shared card
-/// chrome (background, border, radius, padding, opacity).
+/// The widget's own content, without any card chrome.
 ///
-/// It is used both by the live window and by the previews in the settings window,
-/// so what you see in the inspector is exactly what you get on the desktop.
-struct WidgetSurface: View {
+/// The card (background, border, corners) is drawn separately by
+/// `WidgetCardBackground` so that it can live in the widget's
+/// `containerBackground` — that is what makes a widget look right in the
+/// system's tinted / Liquid Glass rendering modes, where everything drawn as
+/// *content* is tinted and the background is replaced by the system material.
+struct WidgetSurfaceContent: View {
     let definition: WidgetDefinition
     let settings: SettingsBag
     var date: Date = Date()
@@ -16,18 +18,31 @@ struct WidgetSurface: View {
         definition.content(WidgetContext(settings: settings, date: date, size: size))
             .padding(settings.double("common.padding"))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background { background }
-            .clipShape(shape)
-            .overlay { border }
-            .opacity(settings.double("common.opacity"))
     }
+}
 
-    private var shape: RoundedRectangle {
-        RoundedRectangle(cornerRadius: settings.double("common.cornerRadius"), style: .continuous)
+/// The card itself: background fill, gradient, glass and the border.
+struct WidgetCardBackground: View {
+    let settings: SettingsBag
+    /// App previews clip the card to its rounded corners themselves; inside
+    /// `containerBackground` the system clips to the real widget shape.
+    var rounded: Bool = false
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: settings.double("common.cornerRadius"), style: .continuous)
+        Group {
+            fill
+            if settings.double("common.borderWidth") > 0 && settings.string("common.cardStyle") != "none" {
+                shape.strokeBorder(settings.color("common.borderColor"),
+                                   lineWidth: settings.double("common.borderWidth"))
+            }
+        }
+        .clipShape(shape, if: rounded)
     }
 
     @ViewBuilder
-    private var background: some View {
+    private var fill: some View {
+        let shape = RoundedRectangle(cornerRadius: settings.double("common.cornerRadius"), style: .continuous)
         switch settings.string("common.cardStyle") {
         case "none":
             Color.clear
@@ -46,17 +61,34 @@ struct WidgetSurface: View {
             shape.fill(settings.color("common.background"))
         }
     }
+}
 
+private extension View {
     @ViewBuilder
-    private var border: some View {
-        if settings.double("common.borderWidth") > 0 && settings.string("common.cardStyle") != "none" {
-            shape.strokeBorder(settings.color("common.borderColor"),
-                               lineWidth: settings.double("common.borderWidth"))
+    func clipShape<S: Shape>(_ shape: S, if condition: Bool) -> some View {
+        if condition {
+            clipShape(shape)
+        } else {
+            self
         }
     }
 }
 
-/// Small round button used by the hover controls and previews.
+/// Draws one widget the way the app previews it: content plus the card chrome.
+struct WidgetSurface: View {
+    let definition: WidgetDefinition
+    let settings: SettingsBag
+    var date: Date = Date()
+    var size: CGSize = CGSize(width: 158, height: 158)
+
+    var body: some View {
+        WidgetSurfaceContent(definition: definition, settings: settings, date: date, size: size)
+            .background { WidgetCardBackground(settings: settings, rounded: true) }
+            .opacity(settings.double("common.opacity"))
+    }
+}
+
+/// Small round button used by the previews.
 struct WidgetCircleButton: View {
     let systemImage: String
     var help: String = ""

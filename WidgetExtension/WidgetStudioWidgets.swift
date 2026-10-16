@@ -54,6 +54,18 @@ struct StudioEntry: TimelineEntry {
     let date: Date
     let kind: String
     let settings: SettingsBag
+    var family: WidgetFamily = .systemSmall
+
+    /// macOS lays a desktop widget out at roughly these sizes; the widgets only
+    /// use the size for their own scaling decisions.
+    var familySize: CGSize {
+        switch family {
+        case .systemSmall: return CGSize(width: 164, height: 164)
+        case .systemMedium: return CGSize(width: 344, height: 164)
+        case .systemLarge: return CGSize(width: 344, height: 344)
+        default: return CGSize(width: 164, height: 164)
+        }
+    }
 }
 
 struct StudioProvider: TimelineProvider {
@@ -68,12 +80,12 @@ struct StudioProvider: TimelineProvider {
     }
 
     func placeholder(in context: Context) -> StudioEntry {
-        return StudioEntry(date: Date(), kind: kind, settings: definition.bag([:]))
+        return StudioEntry(date: Date(), kind: kind, settings: definition.bag([:]), family: context.family)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (StudioEntry) -> Void) {
         Localization.shared.language = SharedConfig.language
-        completion(StudioEntry(date: Date(), kind: kind, settings: bag))
+        completion(StudioEntry(date: Date(), kind: kind, settings: bag, family: context.family))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<StudioEntry>) -> Void) {
@@ -98,10 +110,10 @@ struct StudioProvider: TimelineProvider {
             anchor = calendar.dateInterval(of: .minute, for: now)?.start ?? now
         }
 
-        var entries = [StudioEntry(date: now, kind: kind, settings: settings)]
+        var entries = [StudioEntry(date: now, kind: kind, settings: settings, family: context.family)]
         for offset in 1..<count {
             guard let date = calendar.date(byAdding: step, value: offset, to: anchor) else { continue }
-            entries.append(StudioEntry(date: date, kind: kind, settings: settings))
+            entries.append(StudioEntry(date: date, kind: kind, settings: settings, family: context.family))
         }
         completion(Timeline(entries: entries, policy: .atEnd))
     }
@@ -124,19 +136,19 @@ struct StudioWidgetView: View {
     }
 
     var body: some View {
-        GeometryReader { proxy in
-            WidgetSurface(definition: definition,
-                          settings: entry.settings,
-                          date: entry.date,
-                          size: proxy.size)
-        }
-        // An explicit container background keeps the widget readable when the
-        // desktop is not the active layer (otherwise the system paints its own
-        // light placeholder background behind the card).
-        .containerBackground(for: .widget) {
-            entry.settings.color("common.background")
-        }
-        .widgetURL(clickURL)
+        // Only the widget's own content goes here. The card is handed to the
+        // system as the container background: in the desktop's tinted / Liquid
+        // Glass appearance everything drawn as content is tinted (a dark card
+        // becomes a white blob), while the container background is replaced by
+        // the system material — exactly like the built-in widgets behave.
+        WidgetSurfaceContent(definition: definition,
+                             settings: entry.settings,
+                             date: entry.date,
+                             size: entry.familySize)
+            .containerBackground(for: .widget) {
+                WidgetCardBackground(settings: entry.settings)
+            }
+            .widgetURL(clickURL)
     }
 }
 

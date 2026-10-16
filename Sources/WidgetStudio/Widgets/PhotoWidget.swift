@@ -158,13 +158,12 @@ private struct PhotoContentView: View {
 
     @ViewBuilder
     private func picture(_ cgImage: CGImage, settings: SettingsBag) -> some View {
-        let image = Image(decorative: cgImage, scale: 1)
-            .resizable()
+        let base = Self.photoImage(cgImage)
         let fill = settings.string("photo.fit") != "fit"
         let zoom = settings.double("photo.zoom")
 
         GeometryReader { proxy in
-            image
+            base
                 .aspectRatio(contentMode: fill ? .fill : .fit)
                 .frame(width: proxy.size.width, height: proxy.size.height)
                 .scaleEffect(zoom)
@@ -176,6 +175,16 @@ private struct PhotoContentView: View {
                 Color.black.opacity(settings.double("photo.dim"))
             }
         }
+    }
+
+    /// A picture is media content: keep it in colour even when the system
+    /// renders the widget in the accented (tinted) rendering mode.
+    private static func photoImage(_ cgImage: CGImage) -> AnyView {
+        let image = Image(decorative: cgImage, scale: 1).resizable()
+        if #available(macOS 15.0, *) {
+            return AnyView(image.widgetAccentedRenderingMode(.fullColor))
+        }
+        return AnyView(image)
     }
 
     @ViewBuilder

@@ -39,6 +39,18 @@ final class AppState: ObservableObject {
         observeProfiles()
         applyDockPolicy()
         restartWidgetsAfterUpdate()
+        // Diagnostics: which of our widgets are currently placed on the desktop.
+        WidgetCenter.shared.getCurrentConfigurations { result in
+            switch result {
+            case .success(let infos):
+                NSLog("[WidgetStudio] placed widgets: %d", infos.count)
+                for info in infos {
+                    NSLog("[WidgetStudio]   kind=%@ family=%d", info.kind, info.family.rawValue)
+                }
+            case .failure(let error):
+                NSLog("[WidgetStudio] configurations error: %@", String(describing: error))
+            }
+        }
         // Persist the initial set of profiles, so a fresh install is complete.
         scheduleSave()
     }

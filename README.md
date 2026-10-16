@@ -186,8 +186,12 @@ Xcode не требуется:
   проверяет результат);
 - **таймлайн** виджета должен начинаться с текущего момента, иначе macOS рисует
   пустую светлую заглушку вместо содержимого;
-- у виджета задан явный `containerBackground`, иначе в неактивном состоянии
-  рабочего стола система подставляет свой светлый фон;
+- **карточка виджета отдаётся системе через `containerBackground`, а не рисуется
+  как контент.** В режиме tinted/clear macOS рендерит виджет в *accented* режиме:
+  весь непрозрачный контент окрашивается в белый, а фон, нарисованный внутри
+  контента, исчезает — тёмная карточка превращалась в белый прямоугольник.
+  Фон, переданный в `containerBackground`, система заменяет своим материалом,
+  как у системных виджетов;
 - «открыть приложение по клику» работает через `widgetURL` со схемой
   `widgetstudio://launch?path=…`: виджет не может запускать приложения сам,
   поэтому URL получает Widget Studio и открывает выбранное приложение;
@@ -274,8 +278,10 @@ around the same renderer in `WidgetExtension/WidgetStudioWidgets.swift`.
 
 The widget extension is built without Xcode. It must use `NSExtensionMain` as the
 entry point and must be sandboxed, the nested `.appex` must be re-signed with its
-entitlements, the timeline must start at the current moment and the widget needs an
-explicit container background — otherwise macOS shows its empty light placeholder.
+entitlements, and the timeline must start at the current moment. The card has to be
+handed to the system as the container background: in the tinted/clear appearance
+macOS renders widgets in the *accented* mode, where content is tinted white and a
+background drawn as content disappears (a dark card turned into a white blob).
 “Open an app on click” is implemented with a `widgetstudio://launch?path=…` URL
 that the app handles. A widget extension keeps running the code it loaded when its
 process started, so after an app update the desktop keeps showing the old build
