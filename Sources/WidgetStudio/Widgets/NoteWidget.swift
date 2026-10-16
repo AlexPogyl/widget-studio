@@ -67,7 +67,50 @@ enum NoteWidget {
                         "common.fontWeight": .text("semibold"),
                         "common.textColor": .color(RGBA(1, 1, 1, 0.9))
                      ],
-                     size: CGSize(width: 320, height: 60))
+                     size: CGSize(width: 320, height: 60)),
+
+        WidgetPreset(id: "terminal",
+                     name: LText("Терминал", "Terminal"),
+                     values: [
+                        "common.cardStyle": .text("solid"),
+                        "common.background": .color(RGBA(hex: "#050805")),
+                        "common.cornerRadius": .number(18),
+                        "common.borderWidth": .number(2),
+                        "common.borderColor": .color(RGBA(hex: "#2BE07A", alpha: 0.6)),
+                        "common.fontDesign": .text("monospaced"),
+                        "common.fontSize": .number(16),
+                        "common.textColor": .color(RGBA(hex: "#2BE07A")),
+                        "note.alignment": .text("leading")
+                     ],
+                     size: CGSize(width: 320, height: 140)),
+
+        WidgetPreset(id: "headline",
+                     name: LText("Заголовок", "Headline"),
+                     values: [
+                        "common.cardStyle": .text("none"),
+                        "common.borderWidth": .number(0),
+                        "common.padding": .number(0),
+                        "common.fontWeight": .text("bold"),
+                        "common.fontSize": .number(34),
+                        "common.textColor": .color(RGBA(1, 1, 1, 0.94)),
+                        "note.uppercase": .bool(true)
+                     ],
+                     size: CGSize(width: 420, height: 90)),
+
+        WidgetPreset(id: "quote",
+                     name: LText("Цитата", "Quote"),
+                     values: [
+                        "common.cardStyle": .text("solid"),
+                        "common.background": .color(RGBA(hex: "#141416", alpha: 0.86)),
+                        "common.cornerRadius": .number(22),
+                        "common.borderWidth": .number(0),
+                        "common.fontDesign": .text("serif"),
+                        "common.italic": .bool(true),
+                        "common.fontSize": .number(17),
+                        "common.textColor": .color(RGBA(hex: "#E9E6DF")),
+                        "note.alignment": .text("center")
+                     ],
+                     size: CGSize(width: 320, height: 160))
     ]
 }
 

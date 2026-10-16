@@ -114,7 +114,74 @@ enum CalendarWidget {
                         "common.fontSize": .number(17),
                         "common.cornerRadius": .number(34)
                      ],
-                     size: CGSize(width: 338, height: 158))
+                     size: CGSize(width: 338, height: 158)),
+
+        WidgetPreset(id: "minimal",
+                     name: LText("Только числа", "Numbers only"),
+                     values: [
+                        "common.cardStyle": .text("none"),
+                        "common.borderWidth": .number(0),
+                        "common.padding": .number(0),
+                        "common.fontSize": .number(15),
+                        "common.fontWeight": .text("medium"),
+                        "common.cornerRadius": .number(26),
+                        "common.textColor": .color(RGBA(1, 1, 1, 0.92)),
+                        "calendar.showTitle": .bool(false),
+                        "calendar.showWeekdays": .bool(false),
+                        "calendar.highlightToday": .bool(true),
+                        "calendar.accentColor": .color(RGBA(hex: "#0A84FF")),
+                        "calendar.accentTextColor": .color(RGBA(1, 1, 1, 1))
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "accent",
+                     name: LText("Акцент", "Accent"),
+                     values: [
+                        "common.cardStyle": .text("gradient"),
+                        "common.background": .color(RGBA(hex: "#1B1D21")),
+                        "common.background2": .color(RGBA(hex: "#101010")),
+                        "common.gradientAngle": .number(270),
+                        "common.borderWidth": .number(8),
+                        "common.borderColor": .color(RGBA(hex: "#CECECF")),
+                        "common.cornerRadius": .number(26),
+                        "common.textColor": .color(RGBA(hex: "#E8E8EA")),
+                        "calendar.accentColor": .color(RGBA(hex: "#0A84FF")),
+                        "calendar.accentTextColor": .color(RGBA(1, 1, 1, 1)),
+                        "calendar.tintWeekends": .bool(true)
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "outline",
+                     name: LText("Контур", "Outline"),
+                     values: [
+                        "common.cardStyle": .text("none"),
+                        "common.borderWidth": .number(2),
+                        "common.borderColor": .color(RGBA(1, 1, 1, 0.5)),
+                        "common.cornerRadius": .number(30),
+                        "common.padding": .number(10),
+                        "common.fontWeight": .text("regular"),
+                        "common.fontSize": .number(14),
+                        "common.textColor": .color(RGBA(1, 1, 1, 0.9)),
+                        "calendar.showTitle": .bool(true),
+                        "calendar.highlightToday": .bool(true),
+                        "calendar.todayStyle": .text("outline"),
+                        "calendar.accentColor": .color(RGBA(1, 1, 1, 0.95))
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "warm",
+                     name: LText("Тёплая", "Warm"),
+                     values: [
+                        "common.cardStyle": .text("solid"),
+                        "common.background": .color(RGBA(hex: "#FBF7F0")),
+                        "common.borderWidth": .number(0),
+                        "common.cornerRadius": .number(26),
+                        "common.textColor": .color(RGBA(hex: "#2B2723")),
+                        "common.secondaryOpacity": .number(0.6),
+                        "calendar.accentColor": .color(RGBA(hex: "#E4572E")),
+                        "calendar.accentTextColor": .color(RGBA(1, 1, 1, 1))
+                     ],
+                     size: CGSize(width: 158, height: 158))
     ]
 
     // MARK: - Month model

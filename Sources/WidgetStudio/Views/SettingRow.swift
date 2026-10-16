@@ -72,6 +72,14 @@ struct SettingRow: View {
                 }
             }
 
+        case .date:
+            VStack(alignment: .leading, spacing: 6) {
+                label
+                DatePicker("", selection: dateBinding, displayedComponents: [.date, .hourAndMinute])
+                    .labelsHidden()
+                    .datePickerStyle(.compact)
+            }
+
         case .images:
             VStack(alignment: .leading, spacing: 8) {
                 label
@@ -158,6 +166,17 @@ struct SettingRow: View {
                     .foregroundStyle(.secondary)
             }
         }
+    }
+
+    // MARK: - Date
+
+    private var dateBinding: Binding<Date> {
+        Binding(get: {
+            let raw = profile.bag.string(descriptor.id)
+            return ISO8601DateFormatter().date(from: raw) ?? Date()
+        }, set: { newValue in
+            profile.set(descriptor.id, .text(ISO8601DateFormatter().string(from: newValue)))
+        })
     }
 
     // MARK: - Photo picker

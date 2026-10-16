@@ -1,5 +1,30 @@
 import SwiftUI
 
+/// The three system widget sizes, used by the inspector preview.
+enum WidgetPreviewSize: String, CaseIterable, Identifiable {
+    case small
+    case medium
+    case large
+
+    var id: String { rawValue }
+
+    var title: LText {
+        switch self {
+        case .small: return LText("Маленький", "Small")
+        case .medium: return LText("Средний", "Medium")
+        case .large: return LText("Большой", "Large")
+        }
+    }
+
+    var size: CGSize {
+        switch self {
+        case .small: return CGSize(width: 164, height: 164)
+        case .medium: return CGSize(width: 344, height: 164)
+        case .large: return CGSize(width: 344, height: 344)
+        }
+    }
+}
+
 /// The customization inspector for one widget kind: live preview, ready-made
 /// presets and every option the widget declares.
 struct InspectorView: View {
@@ -7,6 +32,9 @@ struct InspectorView: View {
 
     @EnvironmentObject private var state: AppState
     @EnvironmentObject private var localization: Localization
+
+    /// Widgets look different in every size, so the preview can show them all.
+    @State private var previewSize: WidgetPreviewSize = .small
 
     var body: some View {
         VStack(spacing: 0) {
@@ -29,6 +57,16 @@ struct InspectorView: View {
             }
             .formStyle(.grouped)
         }
+        .task(id: profile.kind) {
+            if profile.kind == WeatherWidget.definition.id {
+                state.refreshWeatherIfNeeded()
+            }
+        }
+        .onChange(of: profile.bag.string("weather.city")) { _ in
+            if profile.kind == WeatherWidget.definition.id {
+                state.refreshWeatherIfNeeded(force: true)
+            }
+        }
     }
 
     // MARK: - Preview
@@ -39,16 +77,25 @@ struct InspectorView: View {
             VStack(spacing: 10) {
                 WidgetPreview(definition: profile.definition,
                               settings: profile.bag,
-                              size: profile.definition.defaultSize,
-                              maxSize: CGSize(width: 380, height: 190))
-                Text(L("Так виджет будет выглядеть на рабочем столе",
-                       "This is how the widget will look on the desktop"))
+                              size: previewSize.size,
+                              maxSize: CGSize(width: 420, height: 175))
+                Picker("", selection: $previewSize) {
+                    ForEach(WidgetPreviewSize.allCases) { size in
+                        Text(size.title.value).tag(size)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .frame(width: 320)
+                Text(L("Размер виджета выбирается на рабочем столе: потяните за уголок в режиме редактирования",
+                       "The size is chosen on the desktop: drag the corner while editing widgets"))
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.7))
+                    .multilineTextAlignment(.center)
             }
-            .padding(18)
+            .padding(14)
         }
-        .frame(height: 250)
+        .frame(height: 275)
     }
 
     // MARK: - Presets

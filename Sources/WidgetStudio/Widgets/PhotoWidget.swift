@@ -109,6 +109,60 @@ enum PhotoWidget {
                         "photo.dim": .number(0.15),
                         "photo.fit": .text("fill")
                      ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "polaroid",
+                     name: LText("Полароид", "Polaroid"),
+                     values: [
+                        "common.cardStyle": .text("solid"),
+                        "common.background": .color(RGBA(hex: "#F6F3EC")),
+                        "common.padding": .number(10),
+                        "common.cornerRadius": .number(14),
+                        "common.borderWidth": .number(0),
+                        "photo.fit": .text("fit"),
+                        "photo.zoom": .number(1),
+                        "photo.dim": .number(0)
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "night",
+                     name: LText("Ночной", "Night"),
+                     values: [
+                        "common.cardStyle": .text("none"),
+                        "common.padding": .number(0),
+                        "common.borderWidth": .number(0),
+                        "common.cornerRadius": .number(26),
+                        "photo.fit": .text("fill"),
+                        "photo.grayscale": .bool(true),
+                        "photo.dim": .number(0.35)
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "glass",
+                     name: LText("Стекло", "Glass"),
+                     values: [
+                        "common.cardStyle": .text("glass"),
+                        "common.background": .color(RGBA(1, 1, 1, 0.10)),
+                        "common.padding": .number(8),
+                        "common.borderWidth": .number(1),
+                        "common.borderColor": .color(RGBA(1, 1, 1, 0.35)),
+                        "common.cornerRadius": .number(30),
+                        "photo.fit": .text("fill"),
+                        "photo.dim": .number(0)
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "clock",
+                     name: LText("Фото с часами", "Photo with a clock"),
+                     values: [
+                        "common.cardStyle": .text("none"),
+                        "common.padding": .number(0),
+                        "common.borderWidth": .number(0),
+                        "common.cornerRadius": .number(26),
+                        "photo.fit": .text("fill"),
+                        "photo.showTime": .bool(true),
+                        "photo.dim": .number(0.2)
+                     ],
                      size: CGSize(width: 158, height: 158))
     ]
 

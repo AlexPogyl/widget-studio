@@ -180,6 +180,32 @@ struct StudioCalendarWidget: Widget {
     }
 }
 
+struct StudioWeatherWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: WeatherWidget.definition.id,
+                            provider: StudioProvider(kind: WeatherWidget.definition.id)) { entry in
+            StudioWidgetView(entry: entry)
+        }
+        .configurationDisplayName(WeatherWidget.definition.name.value)
+        .description(WeatherWidget.definition.summary.value)
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .contentMarginsDisabled()
+    }
+}
+
+struct StudioCountdownWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: CountdownWidget.definition.id,
+                            provider: StudioProvider(kind: CountdownWidget.definition.id)) { entry in
+            StudioWidgetView(entry: entry)
+        }
+        .configurationDisplayName(CountdownWidget.definition.name.value)
+        .description(CountdownWidget.definition.summary.value)
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .contentMarginsDisabled()
+    }
+}
+
 struct StudioPhotoWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: PhotoWidget.definition.id,
@@ -213,6 +239,8 @@ struct WidgetStudioWidgets: WidgetBundle {
     var body: some Widget {
         StudioClockWidget()
         StudioCalendarWidget()
+        StudioWeatherWidget()
+        StudioCountdownWidget()
         StudioPhotoWidget()
         StudioNoteWidget()
     }

@@ -24,6 +24,7 @@ final class AppState: ObservableObject {
     @Published var selection: SidebarSelection? = .overview
 
     private var saveWorkItem: DispatchWorkItem?
+    private var reloadWorkItem: DispatchWorkItem?
     private var cancellables: Set<AnyCancellable> = []
 
     init(configuration: AppConfiguration = Store.load()) {
@@ -53,6 +54,7 @@ final class AppState: ObservableObject {
         }
         // Persist the initial set of profiles, so a fresh install is complete.
         scheduleSave()
+        refreshWeatherIfNeeded()
     }
 
     // MARK: - Profiles
@@ -117,17 +119,45 @@ final class AppState: ObservableObject {
 
     func saveNow() {
         Store.save(configuration)
-        reloadSystemWidgets()
+        scheduleWidgetReload()
+    }
+
+    /// Asks the system to redraw the widgets, but not more often than once a
+    /// second or so: WidgetKit budgets timeline reloads and ignores a flood of
+    /// them, and a killed extension means an empty placeholder on the desktop.
+    func scheduleWidgetReload() {
+        reloadWorkItem?.cancel()
+        let item = DispatchWorkItem { [weak self] in self?.reloadSystemWidgets() }
+        reloadWorkItem = item
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: item)
+    }
+
+    // MARK: - Weather
+
+    private var lastWeatherRequest: Date?
+
+    /// Downloads the forecast when the cache is stale (the widget itself only
+    /// reads the cache, so the app keeps it warm).
+    func refreshWeatherIfNeeded(force: Bool = false) {
+        guard let profile = existingProfile(for: WeatherWidget.definition.id) else { return }
+        let cityID = profile.bag.string("weather.city")
+        let cached = WeatherService.cached(cityID: cityID)
+        if !force, let cached, Date().timeIntervalSince(cached.updated) < 900 { return }
+        if !force, let last = lastWeatherRequest, Date().timeIntervalSince(last) < 60 { return }
+        lastWeatherRequest = Date()
+        WeatherService.fetch(cityID: cityID) { [weak self] _ in
+            self?.scheduleWidgetReload()
+        }
     }
 
     /// Asks the system to redraw the widgets with the current settings.
     ///
-    /// A widget extension keeps running the code it loaded when its process
-    /// started, and `reloadAllTimelines()` does not restart it — after an update
-    /// the desktop would keep showing the old build. Killing the helper process
-    /// makes `chronod` launch the extension from the current bundle again.
+    /// The extension process is deliberately *not* restarted here: while it is
+    /// down macOS draws its empty placeholder, which is what made the desktop
+    /// widget look white most of the time. The process is only restarted once
+    /// per app version (see `restartWidgetsAfterUpdate`), because an extension
+    /// keeps running the code it loaded at launch.
     func reloadSystemWidgets() {
-        Self.restartWidgetExtension()
         WidgetCenter.shared.reloadAllTimelines()
     }
 

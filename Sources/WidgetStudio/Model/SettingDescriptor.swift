@@ -23,6 +23,8 @@ enum SettingControl {
     case application
     /// A list of images copied into the shared container (photo widget).
     case images
+    /// A date (countdown widget); stored as an ISO-8601 string.
+    case date
 }
 
 /// Declarative description of a single customization option.
@@ -128,6 +130,19 @@ extension SettingDescriptor {
                        visibleIf: ((SettingsBag) -> Bool)? = nil) -> SettingDescriptor {
         SettingDescriptor(id: id, title: title, caption: caption, group: group,
                           control: .picker(options), defaultValue: .text(defaultValue), isVisible: visibleIf)
+    }
+
+    static func date(_ id: String,
+                     _ title: LText,
+                     group: LText,
+                     default daysFromNow: Int = 30,
+                     caption: LText? = nil,
+                     visibleIf: ((SettingsBag) -> Bool)? = nil) -> SettingDescriptor {
+        let target = Calendar.current.date(byAdding: .day, value: daysFromNow, to: Date()) ?? Date()
+        return SettingDescriptor(id: id, title: title, caption: caption, group: group,
+                                 control: .date,
+                                 defaultValue: .text(ISO8601DateFormatter().string(from: target)),
+                                 isVisible: visibleIf)
     }
 
     static func images(_ id: String,

@@ -25,12 +25,15 @@ SOURCES=(
     Sources/WidgetStudio/Model/SettingDescriptor.swift
     Sources/WidgetStudio/Model/SettingsBag.swift
     Sources/WidgetStudio/Model/PhotoStore.swift
+    Sources/WidgetStudio/Model/WeatherService.swift
     Sources/WidgetStudio/Model/WidgetAction.swift
     Sources/WidgetStudio/Model/WidgetStyle.swift
     Sources/WidgetStudio/Model/CommonSettings.swift
     Sources/WidgetStudio/Model/WidgetDefinition.swift
     Sources/WidgetStudio/Widgets/ClockWidget.swift
     Sources/WidgetStudio/Widgets/CalendarWidget.swift
+    Sources/WidgetStudio/Widgets/WeatherWidget.swift
+    Sources/WidgetStudio/Widgets/CountdownWidget.swift
     Sources/WidgetStudio/Widgets/PhotoWidget.swift
     Sources/WidgetStudio/Widgets/NoteWidget.swift
     Sources/WidgetStudio/Views/WidgetSurface.swift

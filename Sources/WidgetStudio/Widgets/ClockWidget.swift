@@ -202,7 +202,91 @@ enum ClockWidget {
                         "common.lineSpacing": .number(3),
                         "common.textColor": .color(RGBA(hex: "#111114"))
                      ],
-                     size: CGSize(width: 158, height: 158))
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "terminal",
+                     name: LText("Терминал", "Terminal"),
+                     values: [
+                        "common.cardStyle": .text("solid"),
+                        "common.background": .color(RGBA(hex: "#050805")),
+                        "common.cornerRadius": .number(18),
+                        "common.borderWidth": .number(2),
+                        "common.borderColor": .color(RGBA(hex: "#2BE07A", alpha: 0.65)),
+                        "common.fontDesign": .text("monospaced"),
+                        "common.fontWeight": .text("bold"),
+                        "common.fontSize": .number(64),
+                        "common.italic": .bool(false),
+                        "common.tracking": .number(-1),
+                        "common.lineSpacing": .number(2),
+                        "common.textColor": .color(RGBA(hex: "#2BE07A"))
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "light",
+                     name: LText("Светлая", "Light"),
+                     values: [
+                        "common.cardStyle": .text("solid"),
+                        "common.background": .color(RGBA(hex: "#F2F2F4")),
+                        "common.cornerRadius": .number(26),
+                        "common.borderWidth": .number(0),
+                        "common.fontWeight": .text("black"),
+                        "common.fontSize": .number(72),
+                        "common.italic": .bool(true),
+                        "common.lineSpacing": .number(0),
+                        "common.textColor": .color(RGBA(hex: "#16171A"))
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "midnight",
+                     name: LText("Полночь", "Midnight"),
+                     values: [
+                        "common.cardStyle": .text("solid"),
+                        "common.background": .color(RGBA(0, 0, 0, 1)),
+                        "common.cornerRadius": .number(30),
+                        "common.borderWidth": .number(1),
+                        "common.borderColor": .color(RGBA(1, 1, 1, 0.18)),
+                        "common.fontWeight": .text("heavy"),
+                        "common.fontSize": .number(76),
+                        "common.italic": .bool(false),
+                        "common.tracking": .number(2),
+                        "common.lineSpacing": .number(2),
+                        "common.textColor": .color(RGBA(1, 1, 1, 0.92))
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "amber",
+                     name: LText("Янтарь", "Amber"),
+                     values: [
+                        "common.cardStyle": .text("gradient"),
+                        "common.background": .color(RGBA(hex: "#2A1704")),
+                        "common.background2": .color(RGBA(hex: "#0B0602")),
+                        "common.gradientAngle": .number(270),
+                        "common.cornerRadius": .number(28),
+                        "common.borderWidth": .number(3),
+                        "common.borderColor": .color(RGBA(hex: "#FFB347", alpha: 0.75)),
+                        "common.fontWeight": .text("black"),
+                        "common.fontSize": .number(70),
+                        "common.italic": .bool(true),
+                        "common.lineSpacing": .number(1),
+                        "common.textColor": .color(RGBA(hex: "#FFC773"))
+                     ],
+                     size: CGSize(width: 158, height: 158)),
+
+        WidgetPreset(id: "wide",
+                     name: LText("Широкие", "Wide"),
+                     values: [
+                        "common.cardStyle": .text("solid"),
+                        "common.background": .color(RGBA(hex: "#0B0B0D", alpha: 0.94)),
+                        "common.cornerRadius": .number(30),
+                        "common.borderWidth": .number(6),
+                        "common.borderColor": .color(RGBA(hex: "#CECECF")),
+                        "common.fontWeight": .text("black"),
+                        "common.fontSize": .number(92),
+                        "common.italic": .bool(true),
+                        "common.lineSpacing": .number(0),
+                        "common.textColor": .color(RGBA(hex: "#CCCCCE"))
+                     ],
+                     size: CGSize(width: 338, height: 158))
     ]
 
     // MARK: - Time formatting
