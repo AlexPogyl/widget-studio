@@ -1,0 +1,14 @@
+# Build artifacts
+.build/
+dist/
+*.o
+*.dSYM/
+
+# macOS
+.DS_Store
+._*
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
